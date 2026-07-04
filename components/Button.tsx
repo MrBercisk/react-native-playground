@@ -1,15 +1,9 @@
 import {Text, StyleSheet, Pressable} from 'react-native';
+import { ButtonType } from "@/types/button";
+type ButtonProps = ButtonType;
 
-// ? = properti bersifat optional
-// void = tidak mengembalikan nilai apa apa. contoh function tambah(a: number) ,megmembalikan angka tipe nya number bukan void
-type ButtonProps = {
-    title: string;
-    backgroundColor?: string;
-    onPress: () => void;
-    disabled?: boolean;
-};
-
-export default function Button({title, 
+export default function Button({
+    title, 
     backgroundColor = "#3B82F6", 
     onPress,
     disabled = false
