@@ -1,27 +1,34 @@
-import {StyleSheet, View, Text, Pressable } from  'react-native';
+import {StyleSheet, View, Text } from  'react-native';
+import Button from '@/components/Button';
+import { useState } from 'react';
+import { COLORS } from '@/constants/colors';
+
 
 export default function HomeScreen() {
+
+  const names = ["Berlin Bercisk", "Bimo", "Satrio"];
+  const [index, setIndex] = useState(0);
+  
  return (
 <View style={styles.container}>
   <View style={styles.card}>
     <Text style={styles.emoji}>👤</Text>
 
     <Text style={styles.title}>
-      Berlin Bercisk
-    </Text>
+      {names[index]}
+  </Text>
 
     <Text style={styles.subtitle}>
       Software Engineer
     </Text>
 
-    <Pressable
-      style={styles.button}
-      onPress={() => alert("Edit Profile")}
-    >
-      <Text style={styles.buttonText}>
-        Edit Profile
-      </Text>
-    </Pressable>
+    <Button
+        title="Ganti Nama"
+        backgroundColor={COLORS.primary}
+        onPress={() => {
+            setIndex((index + 1) % names.length);
+        }}
+    />
   </View>
 </View>
   );
@@ -34,16 +41,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  row: {
-    // kalau row nanti kesamping kalau column kebawah
-    flexDirection: "column",
-    gap: 15,
-  },
-
-  border: {
-    fontSize: 20,
-    textAlign: "center",
-  },
   emoji: {
     fontSize: 40,
     textAlign: "center",
@@ -66,16 +63,5 @@ const styles = StyleSheet.create({
       borderRadius:20,
       alignItems:"center",
       elevation:5
-  },
-  button: {
-    backgroundColor: "#3B82F6",
-    padding: 10,
-    borderRadius: 12,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
+  }
 });

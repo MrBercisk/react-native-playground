@@ -8,7 +8,7 @@ type ButtonProps = {
     onPress: () => void;
 };
 
-export default function Button({title, backgroundColor, onPress}: ButtonProps) {
+export default function Button({title, backgroundColor = "#3B82F6", onPress}: ButtonProps) {
   return (
     <Pressable style={[styles.button, { backgroundColor }]} onPress={onPress}>
       <Text style={styles.buttonText}>{title}</Text>
@@ -18,14 +18,16 @@ export default function Button({title, backgroundColor, onPress}: ButtonProps) {
 
 const styles = StyleSheet.create({
     button:{
-        fontSize: 16,
-        backgroundColor: '#2563EB',
+        marginTop: 15,
         paddingVertical: 14,
-        borderRadius: 5,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        width: "100%"
     },
     buttonText: {
         color: "#FFF",
         fontSize: 16,
         fontWeight: "bold",
+        textAlign: "center"
     },
 });
