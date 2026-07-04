@@ -1,8 +1,10 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {View, Text, Pressable} from 'react-native';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
-import { useState } from 'react';
+import { useState} from 'react';
 import { COLORS } from '@/constants/colors';
+import { authStyles } from '@/styles/auth';
+import { Link } from "expo-router";
 
 
 export default function LoginScreen(){
@@ -28,10 +30,10 @@ export default function LoginScreen(){
     }
  
     return (
-    <View style={styles.container}>
-        <Text style={styles.logo}>💰</Text>
-        <Text style={styles.title}>Money Tracker</Text>
-        <Text style={styles.subtitle}>
+    <View style={authStyles.container}>
+        <Text style={authStyles.logo}>💰</Text>
+        <Text style={authStyles.title}>Money Tracker</Text>
+        <Text style={authStyles.subtitle}>
             Welcome Back
         </Text>
 
@@ -74,40 +76,24 @@ export default function LoginScreen(){
             onPress={handleLogin}
             title={loading ? "Loading..." : "Login"}
         />
+      
+        <View style={{ marginTop: 20, alignItems: "center" }}>
+            <Text>Belum punya akun?</Text>
+
+            <Link href="/register">
+                <Text
+                    style={{
+                        color: COLORS.primary,
+                        fontWeight: "bold",
+                        marginTop: 5,
+                    }}
+                >
+                    Register
+                </Text>
+            </Link>
+        </View>
     </View>
+    
     );
 }
 
-const styles = StyleSheet.create({
-    
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        padding: 25,
-        backgroundColor: "#F8FAFC",
-    },
-
-    logo: {
-        fontSize:60,
-        textAlign:"center",
-    },
-
-    title:{
-        fontSize:32,
-        fontWeight:"bold",
-        textAlign:"center",
-        marginTop:15,
-    },
-
-    subtitle:{
-        fontSize:16,
-        color:"#6B7280",
-        textAlign:"center",
-        marginBottom:35,
-    },
-    error: {
-        color: "red",
-        marginBottom: 15,
-        marginLeft: 5,
-    }
-});
