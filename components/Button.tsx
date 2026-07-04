@@ -6,11 +6,22 @@ type ButtonProps = {
     title: string;
     backgroundColor?: string;
     onPress: () => void;
+    disabled?: boolean;
 };
 
-export default function Button({title, backgroundColor = "#3B82F6", onPress}: ButtonProps) {
+export default function Button({title, 
+    backgroundColor = "#3B82F6", 
+    onPress,
+    disabled = false
+}: ButtonProps) {
   return (
-    <Pressable style={[styles.button, { backgroundColor }]} onPress={onPress}>
+    <Pressable disabled={disabled} 
+    style={[styles.button, 
+    { 
+        backgroundColor: disabled ? "#9CA3AF" : backgroundColor
+    }
+]} 
+    onPress={onPress}>
       <Text style={styles.buttonText}>{title}</Text>
     </Pressable>
   );
@@ -18,11 +29,11 @@ export default function Button({title, backgroundColor = "#3B82F6", onPress}: Bu
 
 const styles = StyleSheet.create({
     button:{
+        width: "100%",
         marginTop: 15,
         paddingVertical: 14,
         paddingHorizontal: 20,
         borderRadius: 10,
-        width: "100%"
     },
     buttonText: {
         color: "#FFF",
