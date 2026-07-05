@@ -7,9 +7,9 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { TransactionProvider } from "@/contexts/TransactionContext";
 
 
-// export const unstable_settings = {
-//   anchor: '(tabs)',
-// };
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

@@ -6,8 +6,8 @@ import { transactions as initialTransactions } from "@/data/transactions";
 type TransactionContextType = {
   transactions: Transaction[];
   summary: Summary[];
-  addTransaction: (transaction: Omit<Transaction, "id">) => void;
-  updateTransaction: (id: number, transaction: Omit<Transaction, "id">) => void;
+  addTransaction: (transaction: Omit<Transaction, "id" | "date">) => void;
+  updateTransaction: (id: number, transaction: Omit<Transaction, "id" | "date">) => void;
   deleteTransaction: (id: number) => void;
 };
 
@@ -20,14 +20,17 @@ type ProviderProps = {
 export function TransactionProvider({ children }: ProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
 
-  const addTransaction = (transaction: Omit<Transaction, "id">) => {
-    const newTransaction: Transaction = { id: Date.now(), ...transaction };
+  const addTransaction = (transaction: Omit<Transaction, "id" | "date">) => {
+    const newTransaction: Transaction = { 
+      id: Date.now(), 
+      date: Date.now(),
+      ...transaction };
     setTransactions((prev) => [newTransaction, ...prev]);
   };
 
-  const updateTransaction = (id: number, updated: Omit<Transaction, "id">) => {
+  const updateTransaction = (id: number, updated: Omit<Transaction, "id" | "date">) => {
     setTransactions((prev) =>
-      prev.map((t) => (t.id === id ? { id, ...updated } : t))
+     prev.map((t) => (t.id === id ? { ...t, ...updated } : t))
     );
   };
 

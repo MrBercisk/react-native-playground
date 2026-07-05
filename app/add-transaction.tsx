@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, Pressable } from "react-native";
 import Input from "@/components/Input";
 import { useState, useEffect } from "react";
 import { Picker } from "@react-native-picker/picker";
@@ -28,7 +28,7 @@ export default function AddTransactionScreen() {
         setType(existing.type);
       }
     }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleSave = () => {
@@ -61,6 +61,11 @@ export default function AddTransactionScreen() {
 
   return (
     <View style={styles.container}>
+      <Pressable style={styles.backButton} onPress={() => router.back()} hitSlop={10}>
+        <Text style={styles.backIcon}>←</Text>
+        <Text style={styles.backText}>Back</Text>
+      </Pressable>
+
       <Text style={styles.title}>
         {isEditMode ? "Edit Transaction" : "Add Transaction"}
       </Text>
@@ -107,6 +112,22 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#F8FAFC",
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    marginBottom: 15,
+  },
+  backIcon: {
+    fontSize: 22,
+    color: COLORS.primary,
+    marginRight: 6,
+  },
+  backText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: COLORS.primary,
   },
   title: {
     fontSize: 28,

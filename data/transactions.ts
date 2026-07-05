@@ -7,6 +7,7 @@ export const transactions: Transaction[] = [
     category: "food",
     amount: 25000,
     type: "expense",
+    date: new Date("2026-07-02").getTime(),
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const transactions: Transaction[] = [
     category: "transport",
     amount: 100000,
     type: "expense",
+    date: new Date("2026-07-03").getTime(),
   },
   {
     id: 3,
@@ -21,6 +23,7 @@ export const transactions: Transaction[] = [
     category: "freelance",
     amount: 2500000,
     type: "income",
+    date: new Date("2026-06-20").getTime(),
   },
   {
     id: 4,
@@ -28,5 +31,6 @@ export const transactions: Transaction[] = [
     category: "salary",
     amount: 5000000,
     type: "income",
+    date: new Date("2026-06-01").getTime(),
   },
 ];

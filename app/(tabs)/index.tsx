@@ -3,7 +3,7 @@ import SummaryCard from "@/components/SummaryCard";
 import TransactionItem from "@/components/TransactionItem";
 import { useTransaction } from "@/contexts/TransactionContext";
 import { COLORS } from "@/constants/colors";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 export default function HomeScreen() {
   const { transactions, summary, deleteTransaction } = useTransaction();
@@ -38,7 +38,13 @@ export default function HomeScreen() {
                 <Text style={styles.welcome}>Welcome Back 👋</Text>
                 <Text style={styles.name}>Berlin Bercisk</Text>
               </View>
-              <Text style={styles.avatar}>👤</Text>
+               <Link href="/(tabs)/profile">
+                    <Text
+                       style={styles.avatar}
+                    >
+                        👤
+                    </Text>
+                </Link>
             </View>
             <Text style={styles.date}>Monday, 6 July 2026</Text>
 
@@ -51,7 +57,7 @@ export default function HomeScreen() {
               />
             ))}
 
-            <Pressable style={styles.sectionHeader} onPress={() => router.push("/transaction")}>
+            <Pressable style={styles.sectionHeader} onPress={() => router.push("/(tabs)/transaction")}>
               <Text style={styles.sectionTitle}>Recent Transactions</Text>
               <Text style={styles.seeAll}>See All ›</Text>
             </Pressable>
@@ -63,6 +69,7 @@ export default function HomeScreen() {
             category={item.category}
             amount={item.amount}
             type={item.type}
+            date={item.date}
             onPress={() => router.push(`/add-transaction?id=${item.id}`)}
             onDelete={() => handleDelete(item.id)} 
           />

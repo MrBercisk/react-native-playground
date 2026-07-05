@@ -69,6 +69,7 @@ export default function TransactionScreen() {
             title={item.title}
             category={item.category}
             amount={item.amount}
+            date={item.date}
             type={item.type}
             onPress={() => router.push(`/add-transaction?id=${item.id}`)}
             onDelete={() => handleDelete(item.id)} 

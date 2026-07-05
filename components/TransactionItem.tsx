@@ -11,6 +11,7 @@ export default function TransactionItem({
   amount,
   type,
   category,
+  date,
   onPress,
   onDelete,
 }: TransactionItemProps) {
@@ -44,6 +45,7 @@ export default function TransactionItem({
         >
           {type === "income" ? "+" : "-"} Rp {amount.toLocaleString("id-ID")}
         </Text>
+          <Text style={styles.date}>{date}</Text>
       </Pressable>
 
       <Pressable onPress={onDelete} hitSlop={12} style={styles.deleteButton}>
@@ -78,6 +80,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   title: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  date: {
     fontSize: 16,
     fontWeight: "600",
   },
