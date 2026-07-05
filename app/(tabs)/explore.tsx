@@ -2,9 +2,8 @@ import { View, Text, StyleSheet, SectionList } from "react-native";
 import { useTransaction } from "@/contexts/TransactionContext";
 import { Transaction } from "@/types/transaction";
 
-// helper: ubah timestamp jadi label "Juli 2026"
-const getMonthLabel = (timestamp: number) => {
-  const date = new Date(timestamp);
+const getMonthLabel = (dateString: string) => {
+  const date = new Date(dateString);
   return date.toLocaleDateString("id-ID", {
     month: "long",
     year: "numeric",
@@ -13,14 +12,11 @@ const getMonthLabel = (timestamp: number) => {
 
 export default function ReportsScreen() {
   const { transactions } = useTransaction();
-
-  // kelompokkan transaksi berdasarkan bulan
   const sections = groupByMonth(transactions);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Reports</Text>
-
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id.toString()}
@@ -37,49 +33,48 @@ export default function ReportsScreen() {
             </View>
           </View>
         )}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={styles.rowTitle}>{item.title}</Text>
-            <Text
-              style={[
-                styles.rowAmount,
-                { color: item.type === "income" ? "#22C55E" : "#EF4444" },
-              ]}
-            >
-              {item.type === "income" ? "+" : "-"} Rp{" "}
-              {item.amount.toLocaleString("id-ID")}
-            </Text>
-          </View>
-        )}
-        ListEmptyComponent={
-          <Text style={styles.empty}>Belum ada transaksi</Text>
-        }
+        renderItem={({ item }) => {
+          const numericAmount = Number(item.amount); // ⬅️ baru
+          return (
+            <View style={styles.row}>
+              <Text style={styles.rowTitle}>{item.title}</Text>
+              <Text
+                style={[
+                  styles.rowAmount,
+                  { color: item.type === "income" ? "#22C55E" : "#EF4444" },
+                ]}
+              >
+                {item.type === "income" ? "+" : "-"} Rp{" "}
+                {numericAmount.toLocaleString("id-ID")}
+              </Text>
+            </View>
+          );
+        }}
+        ListEmptyComponent={<Text style={styles.empty}>Belum ada transaksi</Text>}
       />
     </View>
   );
 }
 
-// fungsi helper: kelompokkan array transaksi jadi array of sections per bulan
 function groupByMonth(transactions: Transaction[]) {
   const groups: Record<string, Transaction[]> = {};
 
   transactions.forEach((t) => {
-    const label = getMonthLabel(t.date);
+    const label = getMonthLabel(t.date as any);
     if (!groups[label]) {
       groups[label] = [];
     }
     groups[label].push(t);
   });
 
-  // ubah object jadi array, sekaligus hitung total income/expense per bulan
   return Object.keys(groups).map((label) => {
     const items = groups[label];
     const totalIncome = items
       .filter((t) => t.type === "income")
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0); 
     const totalExpense = items
       .filter((t) => t.type === "expense")
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0);
 
     return {
       title: label,

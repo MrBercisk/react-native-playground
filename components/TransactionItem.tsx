@@ -6,6 +6,16 @@ type TransactionItemProps = Omit<Transaction, "id"> & {
   onDelete?: () => void;
 };
 
+// helper: ubah "2026-07-05T10:57:59.000000Z" jadi "5 Jul 2026"
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
 export default function TransactionItem({
   title,
   amount,
@@ -17,35 +27,35 @@ export default function TransactionItem({
 }: TransactionItemProps) {
   const getIcon = () => {
     switch (category) {
-      case "food":
-        return "🍔";
-      case "transport":
-        return "⛽";
-      case "salary":
-        return "💰";
-      case "freelance":
-        return "💻";
-      default:
-        return "📦";
+      case "food": return "🍔";
+      case "transport": return "⛽";
+      case "salary": return "💰";
+      case "freelance": return "💻";
+      default: return "📦";
     }
   };
+
+  const numericAmount = Number(amount); 
 
   return (
     <View style={styles.container}>
       <Pressable style={styles.mainArea} onPress={onPress}>
         <View style={styles.left}>
           <Text style={styles.icon}>{getIcon()}</Text>
-          <Text style={styles.title}>{title}</Text>
+          <View>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.date}>{formatDate(date as any)}</Text>
+          </View>
         </View>
+
         <Text
           style={[
             styles.amount,
             { color: type === "income" ? "#22C55E" : "#EF4444" },
           ]}
         >
-          {type === "income" ? "+" : "-"} Rp {amount.toLocaleString("id-ID")}
+          {type === "income" ? "+" : "-"} Rp {numericAmount.toLocaleString("id-ID")}
         </Text>
-          <Text style={styles.date}>{date}</Text>
       </Pressable>
 
       <Pressable onPress={onDelete} hitSlop={12} style={styles.deleteButton}>
@@ -84,8 +94,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   date: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginTop: 2,
   },
   amount: {
     fontSize: 16,

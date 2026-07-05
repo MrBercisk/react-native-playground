@@ -1,7 +1,11 @@
 import { View, Text, StyleSheet } from "react-native";
 import { COLORS } from "@/constants/colors";
 
+import { useAuth } from "@/contexts/AuthContext";
+import Button from "@/components/Button";
+
 export default function ProfileScreen() {
+const { logout } = useAuth();
   return (
     <View style={styles.container}>
       <View style={styles.avatarWrapper}>
@@ -21,6 +25,11 @@ export default function ProfileScreen() {
           <Text style={styles.infoValue}>Juli 2026</Text>
         </View>
       </View>
+      <Button
+        title="Logout"
+        backgroundColor="#EF4444"
+        onPress={logout} // AuthGuard otomatis bakal redirect ke /login begitu status berubah
+        />
     </View>
   );
 }

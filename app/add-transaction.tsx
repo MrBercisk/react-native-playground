@@ -31,34 +31,36 @@ export default function AddTransactionScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleSave = () => {
+const handleSave = async () => {
     if (!title.trim()) {
-      Alert.alert("Oops", "Title wajib diisi");
-      return;
+        Alert.alert("Oops", "Title wajib diisi");
+        return;
     }
 
     const numericAmount = Number(amount);
     if (!amount.trim() || isNaN(numericAmount) || numericAmount <= 0) {
-      Alert.alert("Oops", "Amount harus angka lebih dari 0");
-      return;
+        Alert.alert("Oops", "Amount harus angka lebih dari 0");
+        return;
     }
 
     const data = {
-      title,
-      amount: numericAmount,
-      category: category as any,
-      type,
+        title,
+        amount: numericAmount,
+        category: category as any,
+        type,
     };
 
-    if (isEditMode) {
-      updateTransaction(Number(id), data);
-    } else {
-      addTransaction(data);
+    try {
+        if (isEditMode) {
+        await updateTransaction(Number(id), data);
+        } else {
+        await addTransaction(data);
+        }
+        router.back();
+    } catch (error: any) {
+        Alert.alert("Gagal menyimpan", error.message || "Terjadi kesalahan");
     }
-
-    router.back();
-  };
-
+    };
   return (
     <View style={styles.container}>
       <Pressable style={styles.backButton} onPress={() => router.back()} hitSlop={10}>

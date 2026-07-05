@@ -1,14 +1,21 @@
-import { createContext, useContext, useState, useMemo, ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, useEffect, ReactNode } from "react";
 import { Transaction } from "@/types/transaction";
 import { Summary } from "@/types/summary";
-import { transactions as initialTransactions } from "@/data/transactions";
+import {
+  getTransactions,
+  createTransaction,
+  updateTransactionApi,
+  deleteTransactionApi,
+} from "@/services/transactionService";
 
 type TransactionContextType = {
   transactions: Transaction[];
   summary: Summary[];
-  addTransaction: (transaction: Omit<Transaction, "id" | "date">) => void;
-  updateTransaction: (id: number, transaction: Omit<Transaction, "id" | "date">) => void;
-  deleteTransaction: (id: number) => void;
+  loading: boolean; 
+  addTransaction: (transaction: Omit<Transaction, "id" | "date">) => Promise<void>;
+  updateTransaction: (id: number, transaction: Omit<Transaction, "id" | "date">) => Promise<void>;
+  deleteTransaction: (id: number) => Promise<void>;
+  refreshTransactions: () => Promise<void>; 
 };
 
 const TransactionContext = createContext<TransactionContextType | null>(null);
@@ -18,33 +25,50 @@ type ProviderProps = {
 };
 
 export function TransactionProvider({ children }: ProviderProps) {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const addTransaction = (transaction: Omit<Transaction, "id" | "date">) => {
-    const newTransaction: Transaction = { 
-      id: Date.now(), 
-      date: Date.now(),
-      ...transaction };
+  // ambil data dari server pas pertama kali app dibuka
+  const refreshTransactions = async () => {
+    try {
+      setLoading(true);
+      const data = await getTransactions();
+      setTransactions(data);
+    } catch (error) {
+      console.log("Gagal ambil transaksi:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshTransactions();
+  }, []);
+
+  const addTransaction = async (transaction: Omit<Transaction, "id" | "date">) => {
+    const newTransaction = await createTransaction(transaction);
     setTransactions((prev) => [newTransaction, ...prev]);
   };
 
-  const updateTransaction = (id: number, updated: Omit<Transaction, "id" | "date">) => {
+  const updateTransaction = async (id: number, updated: Omit<Transaction, "id" | "date">) => {
+    const updatedTransaction = await updateTransactionApi(id, updated);
     setTransactions((prev) =>
-     prev.map((t) => (t.id === id ? { ...t, ...updated } : t))
+      prev.map((t) => (t.id === id ? updatedTransaction : t))
     );
   };
 
-  const deleteTransaction = (id: number) => {
+  const deleteTransaction = async (id: number) => {
+    await deleteTransactionApi(id);
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   };
 
   const summary: Summary[] = useMemo(() => {
     const income = transactions
       .filter((t) => t.type === "income")
-      .reduce((total, t) => total + t.amount, 0);
+      .reduce((total, t) => total + Number(t.amount), 0);
     const expense = transactions
       .filter((t) => t.type === "expense")
-      .reduce((total, t) => total + t.amount, 0);
+      .reduce((total, t) => total + Number(t.amount), 0);
     const balance = income - expense;
 
     return [
@@ -56,7 +80,15 @@ export function TransactionProvider({ children }: ProviderProps) {
 
   return (
     <TransactionContext.Provider
-      value={{ transactions, summary, addTransaction, updateTransaction, deleteTransaction }}
+      value={{
+        transactions,
+        summary,
+        loading,
+        addTransaction,
+        updateTransaction,
+        deleteTransaction,
+        refreshTransactions,
+      }}
     >
       {children}
     </TransactionContext.Provider>

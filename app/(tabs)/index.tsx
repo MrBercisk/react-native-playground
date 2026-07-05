@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Pressable, Alert, Platform } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable, Alert, Platform, ActivityIndicator } from "react-native";
 import SummaryCard from "@/components/SummaryCard";
 import TransactionItem from "@/components/TransactionItem";
 import { useTransaction } from "@/contexts/TransactionContext";
@@ -6,24 +6,34 @@ import { COLORS } from "@/constants/colors";
 import { Link, router } from "expo-router";
 
 export default function HomeScreen() {
-  const { transactions, summary, deleteTransaction } = useTransaction();
+  const { transactions, summary, loading, deleteTransaction } = useTransaction();
 
- 
-    const handleDelete = (id: number) => {
-     if (Platform.OS === "web") {
-         // di web
-         const confirmed = window.confirm("Yakin mau hapus transaksi ini?");
-         if (confirmed) {
-         deleteTransaction(id);
-         }
-     } else {
-         // di HP/emulator
-         Alert.alert("Hapus Transaksi", "Yakin mau hapus transaksi ini?", [
-         { text: "Batal", style: "cancel" },
-         { text: "Hapus", style: "destructive", onPress: () => deleteTransaction(id) },
-         ]);
-     }
-     };
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+  const handleDelete = (id: number) => {
+    const confirmDelete = async () => {
+      try {
+        await deleteTransaction(id);
+      } catch (error: any) {
+        Alert.alert("Gagal menghapus", error.message || "Terjadi kesalahan");
+      }
+    };
+
+    if (Platform.OS === "web") {
+      const confirmed = window.confirm("Yakin mau hapus transaksi ini?");
+      if (confirmed) confirmDelete();
+    } else {
+      Alert.alert("Hapus Transaksi", "Yakin mau hapus transaksi ini?", [
+        { text: "Batal", style: "cancel" },
+        { text: "Hapus", style: "destructive", onPress: confirmDelete },
+      ]);
+    }
+  };
  
 
   return (
