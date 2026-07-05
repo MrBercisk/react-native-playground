@@ -4,6 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { TransactionProvider } from "@/contexts/TransactionContext";
+
 
 // export const unstable_settings = {
 //   anchor: '(tabs)',
@@ -16,17 +18,19 @@ export default function RootLayout() {
     <ThemeProvider
         value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       >
-     <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen
-          name="modal"
-          options={{
-            presentation: "modal",
-          }}
-        />
-      </Stack>
-      <StatusBar style="auto" />
+        <TransactionProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen
+              name="modal"
+              options={{
+                presentation: "modal",
+              }}
+            />
+        </Stack>
+        <StatusBar style="auto" />
+      </TransactionProvider>
     </ThemeProvider>
   );
 }

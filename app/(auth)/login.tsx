@@ -4,7 +4,7 @@ import Input from '@/components/Input';
 import { useState} from 'react';
 import { COLORS } from '@/constants/colors';
 import { authStyles } from '@/styles/auth';
-import { Link } from "expo-router";
+import { Link , router} from "expo-router";
 
 
 export default function LoginScreen(){
@@ -21,13 +21,17 @@ export default function LoginScreen(){
 
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = () =>{
-        setLoading(true)
+    const handleLogin = () => {
+        setLoading(true);
+
         setTimeout(() => {
-            setLoading(false)
-            alert("Berhasil");
+            setLoading(false);
+
+            // Login dihapus dari history jadi ga bisa back, kalau pake push() bisa back ke login
+            router.replace("/");
+
         }, 2000);
-    }
+    };
  
     return (
     <View style={authStyles.container}>
