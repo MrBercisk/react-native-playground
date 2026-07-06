@@ -1,20 +1,49 @@
-import { View, Text, StyleSheet, FlatList, Pressable, Alert, Platform, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable, Alert, Platform, ActivityIndicator, Image } from "react-native";
 import SummaryCard from "@/components/SummaryCard";
 import TransactionItem from "@/components/TransactionItem";
 import { useTransaction } from "@/contexts/TransactionContext";
 import { COLORS } from "@/constants/colors";
+import { FONTS } from "@/constants/fonts";
 import { Link, router } from "expo-router";
+import { useAuth } from "@/contexts/AuthContext";
 
+const HORIZONTAL_PADDING = 16;
+
+// ambil inisial dari nama
+const getInitials = (name: string) =>
+  name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+const today = new Date();
+
+const formattedDate = today.toLocaleDateString("en-US", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const formatAmount = (amount: number) =>
+  Math.abs(amount).toLocaleString("id-ID");
 export default function HomeScreen() {
   const { transactions, summary, loading, deleteTransaction } = useTransaction();
-
+  const { user } = useAuth();
+  const displayName = user?.name ?? "User";
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View style={[styles.container, styles.centered]}>
         <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }
+  const totalBalance = transactions.reduce((total, t) => {
+    return t.type === "income" ? total + t.amount : total - t.amount;
+  }, 0);
+
   const handleDelete = (id: number) => {
     const confirmDelete = async () => {
       try {
@@ -34,29 +63,55 @@ export default function HomeScreen() {
       ]);
     }
   };
- 
 
   return (
     <View style={styles.container}>
       <FlatList
         data={transactions}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <>
+            {/* Full width, keluar dari padding */}
+            <View style={styles.logoContainer}>
+              <View style={styles.logoLeft}>
+                <View style={styles.logoBadge}>
+                  <Image
+                    source={require("@/assets/images/logo_apps.png")}
+                    style={styles.logoImage}
+                  />
+                </View>
+                <Text style={styles.logo}>MoraTrack</Text>
+              </View>
+
+              <Link href="/(tabs)/profile" asChild>
+                <Pressable style={styles.avatarWrapper}>
+                  <View style={styles.avatarCircle}>
+                    <Text style={styles.avatarInitials}>
+                      {getInitials(displayName)}
+                    </Text>
+                  </View>
+                  {/* dot indikator kecil, opsional - bisa buat status online/notifikasi */}
+                  <View style={styles.avatarDot} />
+                </Pressable>
+              </Link>
+            </View>
+            <View style={styles.heroContainer}>
+              <Text style={styles.walletLabel}>Main Wallet</Text>
+              <View style={styles.walletAmountRow}>
+                <Text style={styles.walletCount}>IDR </Text>
+                <Text style={styles.walletCount}>{formatAmount(totalBalance)}</Text>
+              </View>
+            </View>
+
             <View style={styles.header}>
               <View>
                 <Text style={styles.welcome}>Welcome Back 👋</Text>
-                <Text style={styles.name}>Berlin Bercisk</Text>
+                <Text style={styles.name}>{displayName}</Text>
               </View>
-               <Link href="/(tabs)/profile">
-                    <Text
-                       style={styles.avatar}
-                    >
-                        👤
-                    </Text>
-                </Link>
             </View>
-            <Text style={styles.date}>Monday, 6 July 2026</Text>
+
+            <Text style={styles.date}>{formattedDate}</Text>
 
             {summary.map((item) => (
               <SummaryCard
@@ -67,7 +122,10 @@ export default function HomeScreen() {
               />
             ))}
 
-            <Pressable style={styles.sectionHeader} onPress={() => router.push("/(tabs)/transaction")}>
+            <Pressable
+              style={styles.sectionHeader}
+              onPress={() => router.push("/(tabs)/transaction")}
+            >
               <Text style={styles.sectionTitle}>Recent Transactions</Text>
               <Text style={styles.seeAll}>See All ›</Text>
             </Pressable>
@@ -81,10 +139,11 @@ export default function HomeScreen() {
             type={item.type}
             date={item.date}
             onPress={() => router.push(`/add-transaction?id=${item.id}`)}
-            onDelete={() => handleDelete(item.id)} 
+            onDelete={() => handleDelete(item.id)}
           />
         )}
       />
+
       <Pressable style={styles.add} onPress={() => router.push("/add-transaction")}>
         <Text style={styles.addText}>+</Text>
       </Pressable>
@@ -95,9 +154,106 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#F8FAFC",
   },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listContent: {
+    paddingHorizontal: HORIZONTAL_PADDING,
+    paddingBottom: 100, // biar item terakhir gak ketutup tombol +
+  },
+
+  logoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: -HORIZONTAL_PADDING,
+    paddingHorizontal: HORIZONTAL_PADDING,
+    paddingVertical: 12,
+    backgroundColor: COLORS.primary,
+  },
+  heroContainer: {
+    marginHorizontal: -HORIZONTAL_PADDING,
+    paddingHorizontal: HORIZONTAL_PADDING,
+    marginBottom: 20,
+    paddingVertical: 8,
+    backgroundColor: COLORS.primary,
+  },
+  walletLabel: {
+    color: COLORS.border,
+    fontSize: 14,
+    fontFamily: FONTS.medium,
+    marginBottom: 6,
+  },
+  walletAmountRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  walletCount: {
+    fontSize: 27,
+    fontFamily: FONTS.extraBold,
+    color: COLORS.surface,
+  },
+  logoLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logoBadge: {
+    width: 38,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  logoImage: {
+    width: 50,
+    height: 55,
+  },
+  logo: {
+    fontSize: 24,
+    color: "#FFFFFF",
+    fontFamily: FONTS.bold,
+  },
+
+  // --- Avatar ---
+  avatarWrapper: {
+    position: "relative",
+  },
+  avatarCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.6)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  avatarInitials: {
+    fontSize: 15,
+    fontFamily: FONTS.bold,
+    color: COLORS.primary,
+  },
+  avatarDot: {
+    position: "absolute",
+    bottom: -2,
+    right: -2,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: COLORS.success,
+    borderWidth: 2,
+    borderColor: COLORS.surface,
+  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -107,14 +263,14 @@ const styles = StyleSheet.create({
   welcome: {
     color: "#6B7280",
     fontSize: 14,
+    fontFamily: FONTS.regular,
   },
   name: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontFamily: FONTS.bold,
   },
-  avatar: {
-    fontSize: 45,
-  },
+
+
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -124,16 +280,18 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FONTS.bold,
   },
   seeAll: {
     color: COLORS.primary,
-    fontWeight: "600",
+    fontFamily: FONTS.semiBold,
   },
   date: {
     color: "#6B7280",
     marginBottom: 20,
+    fontFamily: FONTS.regular,
   },
+
   add: {
     position: "absolute",
     width: 60,
@@ -149,6 +307,6 @@ const styles = StyleSheet.create({
   addText: {
     color: "#FFF",
     fontSize: 32,
-    fontWeight: "bold",
+    fontFamily: FONTS.bold,
   },
 });

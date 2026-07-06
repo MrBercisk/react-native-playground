@@ -1,5 +1,5 @@
 import request from "./api";
-import { saveToken, removeToken } from "./storage";
+import { saveToken, removeToken, saveUser, removeUser } from "./storage";
 
 export async function register(name: string, email: string, password: string) {
   const data = await request("/register", {
@@ -7,6 +7,7 @@ export async function register(name: string, email: string, password: string) {
     body: JSON.stringify({ name, email, password }),
   });
   await saveToken(data.token);
+  await saveUser(data.user);
   return data.user;
 }
 
@@ -16,10 +17,12 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
   await saveToken(data.token);
+  await saveUser(data.user);
   return data.user;
 }
 
 export async function logout() {
   await request("/logout", { method: "POST" });
   await removeToken();
+  await removeUser();
 }
