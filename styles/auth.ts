@@ -1,11 +1,13 @@
 import { StyleSheet } from "react-native";
+import { COLORS } from "@/constants/colors";
 
 export const authStyles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
         padding: 25,
-        backgroundColor: "#F8FAFC",
+        backgroundColor: COLORS.primary,
+     
     },
 
     logo: {
@@ -18,12 +20,13 @@ export const authStyles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginTop: 15,
+        color: COLORS.surface
     },
 
     subtitle: {
         fontSize: 16,
-        color: "#6B7280",
         textAlign: "center",
         marginBottom: 35,
+        color: COLORS.card
     },
 });

@@ -1,5 +1,6 @@
 import {TextInput, View, Text, StyleSheet}  from 'react-native';
 import { Input } from "@/types/input";
+import { COLORS } from '@/constants/colors';
 type InputProps = Input;
 
 export default function input({
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "600",
     marginBottom: 6,
+    color: COLORS.surface
   },
 
   input: {

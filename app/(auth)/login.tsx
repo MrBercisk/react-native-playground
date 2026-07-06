@@ -60,21 +60,21 @@ export default function LoginScreen() {
         error={password.length > 0 && !isPasswordValid ? "Password minimal 8 karakter" : undefined}
       />
 
-      <Pressable onPress={() => setShowPassword((prev) => !prev)}>
-        <Text>{showPassword ? "Hide Password" : "👁 Show Password"}</Text>
+      <Pressable  onPress={() => setShowPassword((prev) => !prev)}>
+        <Text style={{color: COLORS.surface}}>{showPassword ? "Hide Password" : "👁 Show Password"}</Text>
       </Pressable>
 
       <Button
-        backgroundColor={COLORS.primary}
+        backgroundColor={COLORS.success}
         disabled={!canLogin || loading}
         onPress={handleLogin}
         title={loading ? "Loading..." : "Login"}
       />
 
       <View style={{ marginTop: 20, alignItems: "center" }}>
-        <Text>Belum punya akun?</Text>
+        <Text style={{color: COLORS.surface, marginBottom: 10}}>Belum punya akun?</Text>
         <Link href="/register">
-          <Text style={{ color: COLORS.primary, fontWeight: "bold", marginTop: 5 }}>
+          <Text style={{ color: COLORS.surface, fontWeight: "bold", marginTop: 5 }}>
             Register
           </Text>
         </Link>

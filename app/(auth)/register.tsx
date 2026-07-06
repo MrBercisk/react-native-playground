@@ -68,9 +68,9 @@ export default function RegisterScreen() {
       />
 
       <View style={{ marginTop: 20, alignItems: "center" }}>
-        <Text>Sudah punya akun?</Text>
+        <Text style={{color: COLORS.surface, marginBottom: 10}}>Sudah punya akun?</Text>
         <Link href="/login">
-          <Text style={{ color: COLORS.primary, fontWeight: "bold", marginTop: 5 }}>
+          <Text style={{ color: COLORS.surface, fontWeight: "bold", marginTop: 5 }}>
             Login
           </Text>
         </Link>
